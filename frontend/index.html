@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Recipe AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+        <div class="p-8">
+            <h1 class="text-2xl font-bold mb-4">Food Recipe AI</h1>
+            <form id="uploadForm" class="mb-4">
+                <input type="file" id="imageInput" accept="image/*" class="mb-2">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Upload and Generate Recipe
+                </button>
+            </form>
+            <div id="result" class="hidden">
+                <h2 class="text-xl font-semibold mb-2">Detected Foods:</h2>
+                <ul id="detectedFoods" class="list-disc list-inside mb-4"></ul>
+                <h2 class="text-xl font-semibold mb-2">Generated Recipe:</h2>
+                <p id="recipe"></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('file', document.getElementById('imageInput').files[0]);
+
+            try {
+                const response = await fetch('/detect_and_generate', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                document.getElementById('detectedFoods').innerHTML = data.detected_foods.map(food => `<li>${food}</li>`).join('');
+                document.getElementById('recipe').textContent = data.recipe;
+                document.getElementById('result').classList.remove('hidden');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
