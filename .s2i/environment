@@ -1,0 +1,3 @@
+APP_FILE=app.py
+UPGRADE_PIP_TO_LATEST=true
+APP_MODULE=app:app
