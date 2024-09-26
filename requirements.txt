@@ -1,4 +1,6 @@
 flask
+torch
+torchvision
 opencv-python-headless
 numpy
-openshift-ai-sdk
+yolov5

@@ -1,16 +1,16 @@
 from flask import Flask, request, jsonify
-from openshift_ai import ObjectDetection
-import numpy as np
+import yolov5
 import cv2
+import numpy as np
 
 app = Flask(__name__)
 
-# Initialize the YOLO object detection model
-model = ObjectDetection()
+# Load the YOLOv5 model
+model = yolov5.load('yolov5s')
 
 @app.route('/')
 def index():
-    return "Welcome to OpenShift AI YOLO Object Detection"
+    return "Welcome to YOLOv5 Object Detection"
 
 @app.route('/detect', methods=['POST'])
 def detect_objects():
@@ -21,18 +21,12 @@ def detect_objects():
     image = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
 
     # Perform object detection
-    detections = model.detect(image)
+    results = model(image)
 
     # Process and return results
-    results = []
-    for detection in detections:
-        results.append({
-            'class': detection.class_name,
-            'confidence': float(detection.confidence),
-            'bbox': detection.bbox.tolist()
-        })
+    detections = results.pandas().xyxy[0].to_dict(orient="records")
 
-    return jsonify({'detections': results})
+    return jsonify({'detections': detections})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
