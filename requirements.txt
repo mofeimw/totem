@@ -1,6 +1,1 @@
-flask
-ultralytics
-transformers
-opencv-python
-numpy
-torch
+flask==2.0.1
